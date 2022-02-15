@@ -27,6 +27,34 @@ def compute_entanglement(theta):
 
     # QHACK #
 
+    """
+    In Pennylane101 300, we built an entangled state of the form cosA|00> + sinA|11>.
+    Using the same technique, we can add a PauliX to the circuit to make |e> = cosA|10> + sinA|01>.
+
+    Finally, we can entangle this with qubit 0 by using a Hadamard gate and controlling
+    every step to build |e> on qubit 0 as well, resulting in 0.5|0>|00> + 0.5|1>|e>. The last step is
+    a PauliX gate on 0 to make the appropriate state.
+    """
+    @qml.qnode(dev)
+    def tardigrade_entangler():
+        qml.Hadamard(0)
+        qml.CRY(theta, wires=[0,1])
+        qml.CNOT(wires=[0,1])
+        qml.CNOT(wires=[0,2])
+        qml.Toffoli(wires=[0,1,2])
+        qml.PauliX(0)
+
+        return qml.density_matrix([1])
+
+    @qml.qnode(dev)
+    def bell_entangler():
+        qml.Hadamard(0)
+        qml.PauliX(1)
+        qml.CNOT(wires=[0,1])
+
+        return qml.density_matrix([1])
+
+    return [second_renyi_entropy(bell_entangler()), second_renyi_entropy(tardigrade_entangler())]
     # QHACK #
 
 
