@@ -37,11 +37,19 @@ def compute_entanglement(theta):
     """
     @qml.qnode(dev)
     def tardigrade_entangler():
+
+        #Hadamard gate allows for superposition
         qml.Hadamard(0)
+
+        #Steps to make |e> are
+        #RY, X(1), X(2), CNOT(1,2)
+        #Each gate is controlled with qubit 0
         qml.CRY(theta, wires=[0,1])
         qml.CNOT(wires=[0,1])
         qml.CNOT(wires=[0,2])
         qml.Toffoli(wires=[0,1,2])
+
+        #X Gate finishes the desired state
         qml.PauliX(0)
 
         return qml.density_matrix([1])
