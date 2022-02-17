@@ -25,8 +25,15 @@ def switch(oracle):
         # QHACK #
 
         # You are allowed to place operations before and after the oracle without any problem.
+        qml.PauliX(wires="light")
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Hadamard(wires=[2])
+        qml.Hadamard(wires=["light"])
         oracle()
-
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Hadamard(wires=[2])
         # QHACK #
 
         return qml.sample(wires=range(3))
@@ -36,7 +43,11 @@ def switch(oracle):
     # QHACK #
 
     # Process the received sample and return the requested list.
-
+    switches = []
+    for i, value in enumerate(sample):
+        if value == 1:
+            switches.append(i)
+    return switches
     # QHACK #
 
 
