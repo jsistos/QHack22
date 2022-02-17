@@ -16,6 +16,16 @@ def givens_rotations(a, b, c, d):
     """
 
     # QHACK #
+    theta_1 = 2*np.arcsin(np.sqrt(b**2+c**2))
+    if b > 0:
+        theta_1 *= -1
+    theta_2 = 2*np.arcsin(c/np.sin(theta_1/2))
+    if theta_1 == np.pi or theta_1 == -np.pi:
+        theta_3 = np.pi/2
+    else:   
+        theta_3 = 2*np.arcsin(-d/np.cos(theta_1/2))
+    
+    return [theta_1,theta_2,theta_3]
 
     # QHACK #
 
