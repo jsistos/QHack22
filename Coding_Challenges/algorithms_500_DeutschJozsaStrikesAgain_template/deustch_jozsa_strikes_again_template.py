@@ -17,7 +17,44 @@ def deutsch_jozsa(fs):
     """
 
     # QHACK #
-
+    dev = qml.device("default.qubit", wires=7)
+    @qml.qnode(dev)
+    def circuit():
+        mywires=[0,1,2,3,4,5,6]
+        qml.PauliX(wires=2)
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Hadamard(wires=[2])
+        fs[0](mywires)
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Toffoli(wires=[0,1,3])
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        fs[1](mywires)
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Toffoli(wires=[0,1,4])
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        fs[2](mywires)
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Toffoli(wires=[0,1,5])
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        fs[3](mywires)
+        qml.Hadamard(wires=[0])
+        qml.Hadamard(wires=[1])
+        qml.Toffoli(wires=[0,1,6])
+        return [qml.probs(wires=i) for i in range(7)]
+    msmt = circuit()
+    if msmt[3][1] < 0.5 and msmt[4][1] < 0.5 and msmt[5][1] < 0.5:
+        return '4 same'
+    elif msmt[3][1] > 0.5 and msmt[4][1] < 0.5 and msmt[5][1] > 0.5:
+        return '4 same'
+    else:
+        return '2 and 2'
     # QHACK #
 
 
