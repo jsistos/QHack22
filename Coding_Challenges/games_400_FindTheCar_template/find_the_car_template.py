@@ -22,14 +22,17 @@ def find_the_car(oracle):
     @qml.qnode(dev)
     def circuit1():
         # QHACK #
-
+        qml.Hadamard(0)
+        qml.Hadamard(2)
         # QHACK #
         return qml.sample()
 
     @qml.qnode(dev)
     def circuit2():
         # QHACK #
-
+        qml.Hadamard(0)
+        qml.PauliX(1)
+        qml.Hadamard(2)
         # QHACK #
         return qml.sample()
 
