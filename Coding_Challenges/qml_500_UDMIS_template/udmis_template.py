@@ -22,6 +22,28 @@ def hamiltonian_coeffs_and_obs(graph):
     coeffs = []
 
     # QHACK #
+    for i in range(num_vertices):
+        coeffs.append(-1/2.)
+        obs.append(qml.PauliZ(i))
+
+        coeffs.append(-1/2.)
+        obs.append(qml.Identity(i))
+        
+    #Coeff gets divided by two (half in i,j, half in j,i) and then by four (each n_i divided by two)
+    for vertex_i in range(num_vertices-1):
+        for vertex_j in range(vertex_i+1,num_vertices):
+            if   E[vertex_i, vertex_j] != 0:
+                coeffs.append(+u/4)
+                obs.append(qml.PauliZ(vertex_i)@qml.PauliZ(vertex_j))
+
+                coeffs.append(+u/4)
+                obs.append(qml.PauliZ(vertex_i))
+
+                coeffs.append(+u/4)
+                obs.append(qml.PauliZ(vertex_j))
+
+                coeffs.append(+u/4)
+                obs.append(qml.Identity(vertex_i) @ qml.Identity(vertex_j))
 
     # create the Hamiltonian coeffs and obs variables here
 
@@ -55,7 +77,6 @@ def edges(graph):
 
     return E, np.sum(E, axis=(0, 1))
 
-
 def variational_circuit(params, num_vertices):
     """A variational circuit.
 
@@ -65,7 +86,22 @@ def variational_circuit(params, num_vertices):
     """
 
     # QHACK #
+    for i in range(num_vertices):
+        qml.RY(params[i][0],wires=i)
+    for j in range(num_vertices-3):
+        for i in range(0,num_vertices-2,2):
+            qml.CZ(wires=[i,i+1])
+            qml.RY(params[i][1],wires=i)
+            qml.RY(params[i+1][2],wires=i+1)
 
+        for i in range(1,num_vertices-1,2):
+            qml.CZ(wires=[i,i+1])
+            qml.RY(params[i][3],wires=i)
+            qml.RY(params[i+1][4],wires=i+1)
+
+        qml.Hadamard(wires=j)
+        qml.Hadamard(wires=j+1)
+        qml.Hadamard(wires=j+2)
     # create your variational circuit here
 
     # QHACK #
@@ -95,8 +131,11 @@ def train_circuit(num_vertices, H):
     # define your trainable parameters and optimizer here
     # change the number of training iterations, `epochs`, if you want to
     # just be aware of the 80s time limit!
-
-    epochs = 500
+        
+    init_params = np.zeros((num_vertices,5))
+    opt= qml.AdagradOptimizer(.33)
+    params=init_params
+    epochs = 275
 
     # QHACK #
 
