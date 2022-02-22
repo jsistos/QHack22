@@ -20,7 +20,7 @@ def is_bomb(angle):
     """
 
     # QHACK #
-
+    qml.RY(2*angle, wires=0)
     # QHACK #
 
     return qml.sample(qml.PauliZ(0))
@@ -38,7 +38,10 @@ def bomb_tester(angle):
     """
 
     # QHACK #
-
+    #If bomb doesn't explode, it runs through beam splitter, mirror and beam splitter
+    #qml.RY(2*angle, wires=0)
+    qml.X(0)
+    qml.RY(2*angle, wires=0)
     # QHACK #
 
     return qml.sample(qml.PauliZ(0))
@@ -56,6 +59,25 @@ def simulate(angle, n):
     """
 
     # QHACK #
+    exploded = 0
+    beeps_d = 0
+    beeps_c = 0
+
+    for _ in range(10000):
+        for i in range(n):
+            sample = is_bomb(angle)
+            if sample == 1:
+                exploded += 1
+                break
+        final_measurement = bomb_tester(angle)
+        #print(final_measurement)
+
+        if final_measurement == -1:
+            beeps_d += 1
+        else:
+            beeps_c += 1
+
+    return beeps_d / (beeps_c + beeps_d)
 
     # QHACK #
 
